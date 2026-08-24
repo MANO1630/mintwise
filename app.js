@@ -12,7 +12,8 @@ const today = () => new Date().toISOString().slice(0,10);
 function save(){localStorage.setItem(STORAGE,JSON.stringify(data))}
 function isThisMonth(date){const d=new Date(date+'T00:00:00'),n=new Date();return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear()}
 function totals(){return data.transactions.reduce((r,t)=>{if(isThisMonth(t.date))r[t.type]+=t.amount;return r},{income:0,expense:0})}
-function renderCategories(){const type=$('type').value;$('category').innerHTML=categories[type].map(c=>`<option>${c}</option>`).join('')}
+function updateCustomCategory(){const isOther=$('category').value==='Other';$('custom-category-wrap').hidden=!isOther;$('custom-category').required=isOther;if(!isOther)$('custom-category').value=''}
+function renderCategories(){const type=$('type').value;$('category').innerHTML=categories[type].map(c=>`<option>${c}</option>`).join('');updateCustomCategory()}
 function render(){
  const t=totals(), balance=t.income-t.expense;
  $('balance').textContent=money(balance); $('income-total').textContent=money(t.income); $('expense-total').textContent=money(t.expense);
@@ -26,7 +27,8 @@ function render(){
 }
 function escapeHtml(s){return s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 document.querySelectorAll('.type-button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.type-button').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('type').value=b.dataset.type;renderCategories()}));
-$('transaction-form').addEventListener('submit',e=>{e.preventDefault();const item={id:Date.now(),type:$('type').value,description:$('description').value.trim(),amount:Number($('amount').value),category:$('category').value,date:$('date').value};data.transactions.push(item);save();e.target.reset();$('date').value=today();renderCategories();render()});
+$('category').addEventListener('change',updateCustomCategory);
+$('transaction-form').addEventListener('submit',e=>{e.preventDefault();const selectedCategory=$('category').value;const item={id:Date.now(),type:$('type').value,description:$('description').value.trim(),amount:Number($('amount').value),category:selectedCategory==='Other'?$('custom-category').value.trim():selectedCategory,date:$('date').value};data.transactions.push(item);save();e.target.reset();$('date').value=today();renderCategories();render()});
 document.querySelectorAll('.filter').forEach(b=>b.addEventListener('click',()=>{filter=b.dataset.filter;document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===b));render()}));
 $('transaction-list').addEventListener('click',e=>{const id=e.target.dataset.id;if(!id)return;data.transactions=data.transactions.filter(x=>x.id!==Number(id));save();render()});
 $('edit-goal').addEventListener('click',()=>{$('goal-name-input').value=data.goal.name;$('goal-target-input').value=data.goal.target;$('goal-dialog').showModal()});$('close-dialog').addEventListener('click',()=>$('goal-dialog').close());
