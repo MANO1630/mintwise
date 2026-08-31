@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <style>.transaction-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.date-filter-label{margin:0;font-size:11px}.date-filter-label select{width:auto;margin:0 0 0 4px;padding:6px}.transaction-remove{border:0;background:#fff0ec;color:#ae5949;border-radius:6px;padding:6px 8px;font:700 11px "DM Sans";cursor:pointer}.adjustment-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.dialog-hint{font-size:11px;color:#6f7e78;line-height:1.4}@media(max-width:780px){.transaction-controls{align-items:flex-end}.transaction{grid-template-columns:38px 1fr auto auto}}</style>
 </head>
 <body>
   <main class="app-shell">
@@ -65,7 +66,7 @@
     </section>
 
     <section class="panel transactions-panel">
-      <div class="panel-heading transaction-heading"><div><p class="eyebrow">RECENT ACTIVITY</p><h2>Transactions</h2></div><div class="filters"><button class="filter active" data-filter="all">All</button><button class="filter" data-filter="expense">Expenses</button><button class="filter" data-filter="income">Income</button></div></div>
+      <div class="panel-heading transaction-heading"><div><p class="eyebrow">RECENT ACTIVITY</p><h2>Transactions</h2></div><div class="transaction-controls"><div class="filters"><button class="filter active" data-filter="all">All</button><button class="filter" data-filter="expense">Expenses</button><button class="filter" data-filter="income">Income</button></div><label class="date-filter-label">Date<select id="date-filter"><option value="all">All dates</option><option value="today">Today</option><option value="month">This month</option><option value="custom">Choose date</option></select></label><input id="custom-filter-date" type="date" aria-label="Choose transaction date" hidden /></div></div>
       <div id="transaction-list" class="transaction-list"></div>
     </section>
   </main>
@@ -73,9 +74,12 @@
   <dialog id="goal-dialog">
     <form id="goal-form" method="dialog">
       <button class="close-dialog" type="button" id="close-dialog" aria-label="Close">×</button>
-      <p class="eyebrow">SAVINGS GOAL</p><h2>What are you saving for?</h2>
+      <p class="eyebrow">SAVINGS GOAL</p><h2>Manage your goal</h2>
       <label>Goal name<input id="goal-name-input" maxlength="30" placeholder="e.g. Dream holiday" required /></label>
       <label>Target amount<input id="goal-target-input" type="number" min="1" step="1" required /></label>
+      <label>Saved amount<input id="goal-saved-input" type="number" min="0" step="1" required /></label>
+      <div class="adjustment-row"><label>Adjustment<select id="adjustment-type"><option value="add">Add money</option><option value="deduct">Deduct money</option></select></label><label>Amount<input id="adjustment-amount" type="number" min="0" step="1" value="0" /></label></div>
+      <p class="dialog-hint">Set the saved amount directly, or add/deduct an amount before saving.</p>
       <button class="primary-button" type="submit">Save goal</button>
     </form>
   </dialog>
